@@ -1,0 +1,76 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "newVMName": {
+        "type": "string",
+        "defaultValue": "ybenhagai003"
+      },
+      "labName": {
+        "type": "string",
+        "defaultValue": "malnet-devtest"
+      },
+      "size": {
+        "type": "string",
+        "defaultValue": "Standard_D2s_v3"
+      },
+      "userName": {
+        "type": "string",
+        "defaultValue": "ybenhagai"
+      },
+      "password": {
+        "type": "securestring",
+        "defaultValue": "[[[vmadmin]]"
+      }
+    },
+    "variables": {
+      "labSubnetName": "Dtlmalnet-devtestSubnet2",
+      "labVirtualNetworkId": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', parameters('labName'), variables('labVirtualNetworkName'))]",
+      "labVirtualNetworkName": "[concat('Dtl', parameters('labName'))]",
+      "vmId": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', parameters('labName'), parameters('newVMName'))]",
+      "vmName": "[concat(parameters('labName'), '/', parameters('newVMName'))]"
+    },
+    "resources": [
+      {
+        "apiVersion": "2018-10-15-preview",
+        "type": "Microsoft.DevTestLab/labs/virtualmachines",
+        "name": "[variables('vmName')]",
+        "location": "[resourceGroup().location]",
+        "properties": {
+          "labVirtualNetworkId": "[variables('labVirtualNetworkId')]",
+          "notes": "Windows 11 Enterprise",
+          "galleryImageReference": {
+            "offer": "windows-11",
+            "publisher": "microsoftwindowsdesktop",
+            "sku": "win11-21h2-ent",
+            "osType": "Windows",
+            "version": "latest"
+          },
+          "size": "[parameters('size')]",
+          "userName": "[parameters('userName')]",
+          "password": "[parameters('password')]",
+          "isAuthenticationWithSshKey": false,
+          "labSubnetName": "[variables('labSubnetName')]",
+          "disallowPublicIpAddress": true,
+          "storageType": "Standard",
+          "allowClaim": false,
+          "networkInterface": {
+            "sharedPublicIpAddressConfiguration": {
+              "inboundNatRules": [
+                {
+                  "transportProtocol": "tcp",
+                  "backendPort": 3389
+                }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "outputs": {
+      "labVMId": {
+        "type": "string",
+        "value": "[variables('vmId')]"
+      }
+    }
+  }
