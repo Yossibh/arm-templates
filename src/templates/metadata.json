@@ -1,4 +1,6 @@
 {
-    "itemDisplayName": "win11",
-    "description": "Windows 11"
-  }
+  "itemDisplayName": "Win11",
+  "description": "This template creates a win11.",
+  "githubUsername": "ybenhagai",
+  "summary": "Deploys win11 in a DevTest Lab."
+}
